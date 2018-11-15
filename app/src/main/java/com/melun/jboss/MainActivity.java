@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private String giturl = "https://api.github.com/orgs/JBossOutreach/repos";
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
+    private ProgressBar pg;
     List<Object> list = new ArrayList<>();
 
 
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(giturl).get().build();
-
+        pg = findViewById(R.id.pg);
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -64,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         list.add(new getterHome(
                                 repos.getJSONObject(y).getString("name"),
                                 repos.getJSONObject(y).getString("language"),
-                                repos.getJSONObject(y).getString("description") == "null" ? "No description" : repos.getJSONObject(y).getString("name"),
+                                repos.getJSONObject(y).getString("description") == "null" ? "No description" : repos.getJSONObject(y).getString("description"),
                                 repos.getJSONObject(y).getString("stargazers_count"),
                                 repos.getJSONObject(y).getString("watchers_count")));
                     }
@@ -72,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             adapter.notifyDataSetChanged();
+                            pg.setVisibility(View.GONE);
                         }
                     });
-
                 }
                 catch(JSONException e){
                     e.printStackTrace();
