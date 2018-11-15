@@ -3,11 +3,13 @@ package com.melun.jboss;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -20,7 +22,18 @@ public class MainActivity extends AppCompatActivity {
     private String giturl = "https://api.github.com/orgs/JBossOutreach/repos";
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
-    private ArrayList<Object> jsonArray;
+    List<Object> list = new ArrayList<>();
+
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        recyclerView = findViewById(R.id.recyclerview);
+        adapter = new RecyclerViewAdapter(getApplicationContext(), list);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setAdapter(adapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,8 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.recyclerview);
-        adapter = new RecyclerViewAdapter(getApplicationContext(),jsonArray);
+
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(giturl).get().build();
@@ -47,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        list.add(new getterHome("Test","Test","Test","Test","Test"));
 
 
     }
