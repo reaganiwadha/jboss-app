@@ -71,5 +71,20 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             }
         });
-    }
+
+        int viewType = getItemViewType(position);
+        switch (viewType) {
+            default:
+                MenuItemViewHolder menuItemHolder = (MenuItemViewHolder) holder;
+                getterHome menuItem = (getterHome) mRecyclerViewItems.get(position);
+
+                menuItemHolder.name.setText(menuItem.getName());
+                menuItemHolder.desc.setText(menuItem.getDesc());
+                menuItemHolder.language.setText(menuItem.getLanguage());
+                menuItemHolder.stargazer.setText(menuItem.getStargazer());
+                menuItemHolder.watcher.setText(menuItem.getWatcher());
+                // menuItemHolder.color
+        }
+
+        }
 }

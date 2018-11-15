@@ -7,6 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +44,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(giturl).get().build();
+
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -55,11 +57,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String json = response.body().string();
-                Log.d("JSON",json);
+                JSONArray repos = null;
+                try{
+                    repos = new JSONArray(json);
+                    for(int y=0; y<repos.length(); y++){
+                        list.add(new getterHome(
+                                repos.getJSONObject(y).getString("name"),
+                                repos.getJSONObject(y).getString("language"),
+                                repos.getJSONObject(y).getString("description") == "null" ? "No description" : repos.getJSONObject(y).getString("name"),
+                                repos.getJSONObject(y).getString("stargazers_count"),
+                                repos.getJSONObject(y).getString("watchers_count")));
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                }
+                catch(JSONException e){
+                    e.printStackTrace();
+                }
             }
         });
 
-        list.add(new getterHome("Test","Test","Test","Test","Test"));
+
+
 
 
     }
