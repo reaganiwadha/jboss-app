@@ -3,6 +3,7 @@ package com.melun.jboss;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 
 
-class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class recyclerContributor extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int MENU_ITEM_VIEW_TYPE = 0;
 
@@ -21,27 +22,19 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private final List<Object> mRecyclerViewItems;
 
-    public RecyclerViewAdapter(Context context, List<Object> recyclerViewItems) {
+    public recyclerContributor(Context context, List<Object> recyclerViewItems) {
         this.mContext = context;
         this.mRecyclerViewItems = recyclerViewItems;
     }
 
     public class MenuItemViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
-        private TextView language;
-        private TextView desc;
-        private TextView stargazer;
-        private TextView watcher;
-        private LinearLayout llinside;
+        private LinearLayout lineo;
 
         MenuItemViewHolder(View view) {
             super(view);
             name = view.findViewById(R.id.name);
-            language = view.findViewById(R.id.language);
-            desc = view.findViewById(R.id.desc);
-            stargazer = view.findViewById(R.id.stargazer);
-            watcher = view.findViewById(R.id.watcher);
-            llinside = view.findViewById(R.id.llinside);
+            lineo = view.findViewById(R.id.lineor);
         }
     }
 
@@ -56,7 +49,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             case MENU_ITEM_VIEW_TYPE:
             default:
                 View menuItemLayoutView = LayoutInflater.from(viewGroup.getContext()).inflate(
-                        R.layout.cardview_repo, viewGroup, false);
+                        R.layout.repolayout, viewGroup, false);
                 return new MenuItemViewHolder(menuItemLayoutView);
         }
 
@@ -66,15 +59,13 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         final MenuItemViewHolder mih = (MenuItemViewHolder) holder;
-        final getterHome menuItem = (getterHome) mRecyclerViewItems.get(position);
+        final getterContributor menuItem = (getterContributor) mRecyclerViewItems.get(position);
 
-        mih.llinside.setOnClickListener(new View.OnClickListener() {
+        mih.lineo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "https://api.github.com/repos/JBossOutreach/" + menuItem.getName();
-                SharedPreferences sharedPref = mContext.getSharedPreferences("openrepo",Context.MODE_PRIVATE);
-                sharedPref.edit().putString("link",url).apply();
-                mContext.startActivity(new Intent(mContext, aboutRepo.class));
+                String url = "https://github.com/"+mih.name.getText();
+                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
             }
         });
 
@@ -82,14 +73,8 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (viewType) {
             default:
                 MenuItemViewHolder menuItemHolder = (MenuItemViewHolder) holder;
-
-                menuItemHolder.name.setText(menuItem.getName());
-                menuItemHolder.desc.setText(menuItem.getDesc());
-                menuItemHolder.language.setText(menuItem.getLanguage());
-                menuItemHolder.stargazer.setText(menuItem.getStargazer());
-                menuItemHolder.watcher.setText(menuItem.getWatcher());
-                // menuItemHolder.color
+                menuItemHolder.name.setText(menuItem.getUser());
         }
 
-        }
+    }
 }
