@@ -1,12 +1,13 @@
 package com.melun.jboss;
 
-import android.os.AsyncTask;
+import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private ProgressBar pg;
+    private Button about;
     List<Object> list = new ArrayList<>();
 
 
@@ -48,9 +50,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custombar);
+
+
+        about = findViewById(R.id.aboutbutton);
+
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(giturl).get().build();
         pg = findViewById(R.id.pg);
+
+        about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,about.class));
+            }
+        });
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -67,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     for(int y=0; y<repos.length(); y++){
                         list.add(new getterHome(
                                 repos.getJSONObject(y).getString("name"),
-                                repos.getJSONObject(y).getString("language"),
+                                repos.getJSONObject(y).getString("language") == "null" ? "Unknown language" : repos.getJSONObject(y).getString("language"),
                                 repos.getJSONObject(y).getString("description") == "null" ? "No description" : repos.getJSONObject(y).getString("description"),
                                 repos.getJSONObject(y).getString("stargazers_count"),
                                 repos.getJSONObject(y).getString("watchers_count")));
@@ -85,11 +102,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
-
-
     }
-
 }

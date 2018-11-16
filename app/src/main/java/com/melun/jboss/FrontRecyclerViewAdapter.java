@@ -3,10 +3,14 @@ package com.melun.jboss;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -32,7 +36,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private TextView desc;
         private TextView stargazer;
         private TextView watcher;
-        private RelativeLayout color;
+        private LinearLayout llinside;
 
         MenuItemViewHolder(View view) {
             super(view);
@@ -41,7 +45,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             desc = view.findViewById(R.id.desc);
             stargazer = view.findViewById(R.id.stargazer);
             watcher = view.findViewById(R.id.watcher);
-            color = view.findViewById(R.id.color);
+            llinside = view.findViewById(R.id.llinside);
         }
     }
 
@@ -65,10 +69,16 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        final MenuItemViewHolder mih = (MenuItemViewHolder) holder;
+        final getterHome menuItem = (getterHome) mRecyclerViewItems.get(position);
+
+        mih.llinside.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String url = "https://api.github.com/repos/JBossOutreach/" + menuItem.getName();
+                SharedPreferences sharedPref = mContext.getSharedPreferences("openrepo",Context.MODE_PRIVATE);
+                sharedPref.edit().putString("link",url).apply();
+                mContext.startActivity(new Intent(mContext, aboutRepo.class));
             }
         });
 
@@ -76,7 +86,6 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (viewType) {
             default:
                 MenuItemViewHolder menuItemHolder = (MenuItemViewHolder) holder;
-                getterHome menuItem = (getterHome) mRecyclerViewItems.get(position);
 
                 menuItemHolder.name.setText(menuItem.getName());
                 menuItemHolder.desc.setText(menuItem.getDesc());
